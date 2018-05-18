@@ -4,7 +4,7 @@ var width = window.innerWidth,
 // Create a renderer and add it to the DOM.
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);
-renderer.setClearColor(0x000);
+renderer.setClearColor(0xffffff);
 document.body.appendChild(renderer.domElement);
 // Create the scene
 var scene = new THREE.Scene();
@@ -23,16 +23,20 @@ var light2 = new THREE.PointLight(0xffffff);
 light2.position.set(0, 0, 100);
 scene.add(light2);
 
-// Add OrbitControls so that we can pan around with the mouse.
-//var controls = new THREE.OrbitControls(camera, renderer.domElement);
-
 // Add axes
 var axes = new THREE.AxisHelper(50);
 scene.add(axes);
 
 //load mesh
 var mesh = null;
+var floor = null;
 var loader = new THREE.JSONLoader();
+
+loader.load('floor.json', function(geometry, materials) {
+  floor = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+  scene.add(floor);
+});
+
 loader.load('scene.json', function(geometry, materials) {
   mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
   scene.add(mesh);
@@ -40,8 +44,9 @@ loader.load('scene.json', function(geometry, materials) {
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
   resize();
-  turnWall();
+  animate();
 });
+
 
 window.addEventListener('resize', resize);
 
@@ -65,9 +70,9 @@ function onDocumentMouseClick() {
 }
 
 // Renders the scene
-function turnWall(time) {
+function animate(time) {
 
-  requestAnimationFrame(turnWall);
+  requestAnimationFrame(animate);
   TWEEN.update(time);
 
   camera.lookAt(mesh.position);
