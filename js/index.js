@@ -3,11 +3,17 @@ var width = window.innerWidth,
 
 // Create a renderer and add it to the DOM.
 var renderer = new THREE.WebGLRenderer();
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 renderer.setSize(width, height);
-renderer.setClearColor(0xffffff);
+renderer.setClearColor(0x044AEA);
 document.body.appendChild(renderer.domElement);
 // Create the scene
 var scene = new THREE.Scene();
+//Fog
+scene.fog = new THREE.FogExp2( 0xC39B9B, 0.007 );
+scene.fog.density = 0.05;
 // Create a camera
 var camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000);
 camera.position.z = 8;
@@ -16,12 +22,25 @@ scene.add(camera);
 
 // Create a light, set its position, and add it to the scene.
 
-var light = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
-scene.add(light);
+// var light = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
+// scene.add(light);
 
-var light2 = new THREE.PointLight(0xffffff);
-light2.position.set(0, 0, 100);
-scene.add(light2);
+var light = new THREE.DirectionalLight( 0xffffff, .8 );
+light.position.set( 0, 10, -1 ); 			//default; light shining from top
+light.castShadow = true;            // default false
+scene.add( light );
+
+//Set up shadow properties for the light
+light.shadow.mapSize.width = 2048;  // default
+light.shadow.mapSize.height = 2048; // default
+light.shadow.camera.near = 9;    // default
+light.shadow.camera.far = 200;     // default
+
+var light2 = new THREE.AmbientLight( 0xfbcccc, 1 );
+scene.add( light2 );
+
+var lightHelper = new THREE.DirectionalLightHelper( light );
+scene.add( lightHelper );
 
 // Add axes
 var axes = new THREE.AxisHelper(50);
@@ -32,14 +51,11 @@ var mesh = null;
 var floor = null;
 var loader = new THREE.JSONLoader();
 
-loader.load('floor.json', function(geometry, materials) {
-  floor = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-  scene.add(floor);
-});
-
-loader.load('scene.json', function(geometry, materials) {
+loader.load('scene-object-test.json', function(geometry, materials) {
   mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
   scene.add(mesh);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
   camera.position.set(0,0,10);
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
@@ -47,6 +63,7 @@ loader.load('scene.json', function(geometry, materials) {
   animate();
 });
 
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 window.addEventListener('resize', resize);
 
@@ -56,6 +73,7 @@ function resize() {
 
   renderer.setSize(w, h);
   camera.aspect = w / h;
+  camera.fov = 2 * Math.atan( ( window.innerWidth / ( w / h ) ) / ( 3000 ) ) * ( 180 / Math.PI );
   camera.updateProjectionMatrix();
 }
 
@@ -63,9 +81,9 @@ document.addEventListener('click', onDocumentMouseClick, false);
 var orange = false;
 
 function onDocumentMouseClick() {
-  if (!orange) {
-    tween.start();
-  } else tween3.start();
+  // if (!orange) {
+  //   tween.start();
+  // } else tween3.start();
 
 }
 
@@ -77,6 +95,7 @@ function animate(time) {
 
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
+  controls.update();
 
 }
 
