@@ -6,14 +6,15 @@ var renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-renderer.setSize(width, height);
-renderer.setClearColor(0xffffff);
 document.body.appendChild(renderer.domElement);
 // Create the scene
 var scene = new THREE.Scene();
 //Fog
-scene.fog = new THREE.FogExp2( 0xfbcccc, 0.007 );
+scene.fog = new THREE.FogExp2( 0xffffff, 0.007 );
 scene.fog.density = 0.065;
+
+renderer.setSize(width, height);
+renderer.setClearColor( 0xffffff, 1 );
 // Create a camera
 var camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000);
 camera.position.z = 8;
@@ -21,10 +22,6 @@ camera.position.z = 8;
 scene.add(camera);
 
 // Create a light, set its position, and add it to the scene.
-
-// var light = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
-// scene.add(light);
-
 var light = new THREE.DirectionalLight( 0xffffff, 1 );
 light.position.set( 2, 30, -1 ); 			//default; light shining from top
 light.castShadow = true;            // default false
@@ -44,12 +41,19 @@ light.shadow.camera.far = 200;     // default
 var light2 = new THREE.AmbientLight( 0xfbcccc, 1 );
 scene.add( light2 );
 
-var lightHelper = new THREE.DirectionalLightHelper( light );
-scene.add( lightHelper );
+// var bulblight = new THREE.PointLight( 0xff0000, .04, 0.04);
+// light.position.set( 50, 50, 50 );
+// scene.add( light );
+//
+// var lightHelper1 = new THREE.PointLightHelper( bulblight );
+// scene.add( lightHelper1 );
 
-// Add axes
-var axes = new THREE.AxisHelper(50);
-scene.add(axes);
+// var lightHelper = new THREE.DirectionalLightHelper( light );
+// scene.add( lightHelper );
+//
+// // Add axes
+// var axes = new THREE.AxisHelper(50);
+// scene.add(axes);
 
 //load mesh
 var mesh = null;
