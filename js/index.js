@@ -7,13 +7,13 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 renderer.setSize(width, height);
-renderer.setClearColor(0x044AEA);
+renderer.setClearColor(0xffffff);
 document.body.appendChild(renderer.domElement);
 // Create the scene
 var scene = new THREE.Scene();
 //Fog
-scene.fog = new THREE.FogExp2( 0xC39B9B, 0.007 );
-scene.fog.density = 0.05;
+scene.fog = new THREE.FogExp2( 0xfbcccc, 0.007 );
+scene.fog.density = 0.065;
 // Create a camera
 var camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000);
 camera.position.z = 8;
@@ -25,15 +25,20 @@ scene.add(camera);
 // var light = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
 // scene.add(light);
 
-var light = new THREE.DirectionalLight( 0xffffff, .8 );
-light.position.set( 0, 10, -1 ); 			//default; light shining from top
+var light = new THREE.DirectionalLight( 0xffffff, 1 );
+light.position.set( 2, 30, -1 ); 			//default; light shining from top
 light.castShadow = true;            // default false
 scene.add( light );
+
+// var lightfront = new THREE.DirectionalLight( 0xffffff, 2 );
+// lightfront.position.set( 2, 30, 10 ); 			//default; light shining from top
+// lightfront.castShadow = false;            // default false
+// scene.add( lightfront );
 
 //Set up shadow properties for the light
 light.shadow.mapSize.width = 2048;  // default
 light.shadow.mapSize.height = 2048; // default
-light.shadow.camera.near = 9;    // default
+light.shadow.camera.near = 5;    // default
 light.shadow.camera.far = 200;     // default
 
 var light2 = new THREE.AmbientLight( 0xfbcccc, 1 );
@@ -81,9 +86,9 @@ document.addEventListener('click', onDocumentMouseClick, false);
 var orange = false;
 
 function onDocumentMouseClick() {
-  // if (!orange) {
-  //   tween.start();
-  // } else tween3.start();
+  if (!orange) {
+    tween.start();
+  } else tween3.start();
 
 }
 
@@ -115,14 +120,14 @@ function solveForZ(x,z,rot) {
 
 var tween = new TWEEN.Tween(coords) // Create a new tween that modifies 'coords'.
   .to({ x: solveForX(coords.x, coords.z, rot), z: solveForZ(coords.x, coords.z, rot) }, 3000) // Move to (300, 200) in 1 second.
-  .easing(TWEEN.Easing.Back.In) // Use an easing function to make the animation smooth.
+  .easing(TWEEN.Easing.Cubic.In) // Use an easing function to make the animation smooth.
   .onUpdate(function() { // Called after tween.js updates 'coords'.
       camera.position.x = coords.x;
       camera.position.z = coords.z;
   });
 var tween2 = new TWEEN.Tween(coords)
   .to({ x: solveForX(coords.x, coords.z, rot2), z: solveForZ(coords.x, coords.z, rot2) }, 3000) // Move to (300, 200) in 1 second.
-  .easing(TWEEN.Easing.Back.Out)
+  .easing(TWEEN.Easing.Cubic.Out)
   .onUpdate(function() {
       camera.position.x = coords.x;
       camera.position.z = coords.z;
@@ -131,14 +136,14 @@ var tween2 = new TWEEN.Tween(coords)
 
 var tween3 = new TWEEN.Tween(coords) // Create a new tween that modifies 'coords'.
   .to({ x: solveForX(coords.x, coords.z, rot3), z: solveForZ(coords.x, coords.z, rot3) }, 3000) // Move to (300, 200) in 1 second.
-  .easing(TWEEN.Easing.Back.In) // Use an easing function to make the animation smooth.
+  .easing(TWEEN.Easing.Cubic.In) // Use an easing function to make the animation smooth.
   .onUpdate(function() { // Called after tween.js updates 'coords'.
       camera.position.x = coords.x;
       camera.position.z = coords.z;
   });
 var tween4 = new TWEEN.Tween(coords)
   .to({ x: solveForX(coords.x, coords.z, rot4), z: solveForZ(coords.x, coords.z, rot4) }, 3000) // Move to (300, 200) in 1 second.
-  .easing(TWEEN.Easing.Back.Out)
+  .easing(TWEEN.Easing.Cubic.Out)
   .onUpdate(function() {
       camera.position.x = coords.x;
       camera.position.z = coords.z;
