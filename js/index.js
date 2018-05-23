@@ -27,9 +27,17 @@ scene.fog = new THREE.FogExp2( 0xffffff, 0.007 );
 scene.fog.density = 0.058;
 
 var sunlight = new THREE.DirectionalLight( 0xffffff, 1 );
-sunlight.position.set( 2, 30, -1 ); 			//default; light shining from top
+sunlight.position.set( 2, 30, 0 ); 			//default; light shining from top
 sunlight.castShadow = true;            // default false
 scene.add( sunlight );
+
+var frontlight = new THREE.PointLight( 0xffffff, 3);
+frontlight.position.set( 0, 0, 100 );
+frontlight.castShadow = false;
+scene.add( frontlight );
+
+// var pointLightHelper = new THREE.PointLightHelper( frontlight );
+// scene.add( pointLightHelper );
 
 //Set up shadow properties for the light
 sunlight.shadow.mapSize.width = 2048;  // default
@@ -102,7 +110,7 @@ function onDocumentMouseClick() {
 
 }
 
-// var controls = new THREE.OrbitControls(camera, renderer.domElement);
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 // Renders the scene
 function animate(time) {
@@ -112,7 +120,7 @@ function animate(time) {
 
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
-  // controls.update();
+  controls.update();
 
 }
 
