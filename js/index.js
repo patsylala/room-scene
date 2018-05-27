@@ -27,7 +27,7 @@ scene.fog = new THREE.FogExp2( 0xffffff, 0.007 );
 scene.fog.density = 0.058;
 
 var sunlight = new THREE.DirectionalLight( 0xffffff, 1 );
-sunlight.position.set( 2, 30, 0 ); 			//default; light shining from top
+sunlight.position.set( 2, 30, 2 ); 			//default; light shining from top
 sunlight.castShadow = true;            // default false
 scene.add( sunlight );
 
@@ -92,7 +92,7 @@ loader.load('plants.json', function(geometry, materials) {
 
   plant = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
 
-	AnimClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'plantmovement', plant.geometry.morphTargets, 10 );
+	AnimClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'plantmovement', plant.geometry.morphTargets, 2 );
   mixer = new THREE.AnimationMixer( plant );
   action = mixer.clipAction( AnimClip, plant );
   scene.add(plant);
@@ -116,9 +116,6 @@ loader.load('scene-object-test-no-plants.json', function(geometry, materials) {
 
 
 });
-
-
-
 
 window.addEventListener('resize', resize);
 
@@ -156,7 +153,7 @@ function animate(time) {
 }
 
 function render() {
-  var delta = 2 * clock.getDelta();
+  var delta = 0.75 * clock.getDelta();
   mixer.update(delta);
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
