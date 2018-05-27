@@ -75,18 +75,50 @@ scene.add( ambientLight );
 
 //load mesh
 var mesh = null;
+var plant = null;
 var floor = null;
+var AnimClip = null;
+var action = null;
+var mixer = null;
+var clock = new THREE.Clock();
 var loader = new THREE.JSONLoader();
 
-loader.load('scene-object-test.json', function(geometry, materials) {
-  mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+loader.load('plants.json', function(geometry, materials) {
+
+  for ( var i = 0; i < materials.length; i ++ ) {
+  	var m = materials[ i ];
+  	m.morphTargets = true;
+  }
+
+  plant = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+
+	AnimClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'plantmovement', plant.geometry.morphTargets, 10 );
+  mixer = new THREE.AnimationMixer( plant );
+  action = mixer.clipAction( AnimClip, plant );
+  scene.add(plant);
+
+  plant.castShadow = true;
+  plant.receiveShadow = true;
+
+  action.play();
+
+  resize();
+  animate();
+});
+
+loader.load('scene-object-test-no-plants.json', function(geometry, materials) {
+
+  mesh = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
   scene.add(mesh);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   camera.lookAt(mesh.position);
-  resize();
-  animate();
+
+
 });
+
+
+
 
 window.addEventListener('resize', resize);
 
@@ -116,12 +148,19 @@ var controls = new THREE.OrbitControls(camera, renderer.domElement);
 function animate(time) {
 
   requestAnimationFrame(animate);
+
   TWEEN.update(time);
 
+  render();
+
+}
+
+function render() {
+  var delta = 2 * clock.getDelta();
+  mixer.update(delta);
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
   controls.update();
-
 }
 
 var coords = { x: 0, z: 11 };
