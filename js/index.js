@@ -24,7 +24,7 @@ scene.add(camera);
 
 // day scene
 scene.fog = new THREE.FogExp2( 0xffffff, 0.007 );
-scene.fog.density = 0.058;
+scene.fog.density = 0.048;
 
 var sunlight = new THREE.DirectionalLight( 0xffffff, 1 );
 sunlight.position.set( 2, 30, 2 ); 			//default; light shining from top
@@ -35,9 +35,6 @@ var frontlight = new THREE.PointLight( 0xffffff, 3);
 frontlight.position.set( 0, 0, 100 );
 frontlight.castShadow = false;
 scene.add( frontlight );
-
-// var pointLightHelper = new THREE.PointLightHelper( frontlight );
-// scene.add( pointLightHelper );
 
 //Set up shadow properties for the light
 sunlight.shadow.mapSize.width = 2048;  // default
@@ -76,10 +73,13 @@ scene.add( ambientLight );
 //load mesh
 var mesh = null;
 var plant = null;
-var floor = null;
-var AnimClip = null;
-var action = null;
-var mixer = null;
+var cat = null;
+var plantClip = null;
+var plantAction = null;
+var plantMixer = null;
+var catClip = null;
+var catAction = null;
+var catMixer = null;
 var clock = new THREE.Clock();
 var loader = new THREE.JSONLoader();
 
@@ -92,18 +92,39 @@ loader.load('plants.json', function(geometry, materials) {
 
   plant = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
 
-	AnimClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'plantmovement', plant.geometry.morphTargets, 2 );
-  mixer = new THREE.AnimationMixer( plant );
-  action = mixer.clipAction( AnimClip, plant );
+	plantClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'plantmovement', plant.geometry.morphTargets, 1 );
+  plantMixer = new THREE.AnimationMixer( plant );
+  plantAction = plantMixer.clipAction( plantClip, plant );
   scene.add(plant);
 
   plant.castShadow = true;
   plant.receiveShadow = true;
 
-  action.play();
+  plantAction.play();
 
   resize();
   animate();
+});
+
+loader.load('cat.json', function(geometry, materials) {
+
+  for ( var i = 0; i < materials.length; i ++ ) {
+  	var m = materials[ i ];
+  	m.morphTargets = true;
+  }
+
+  cat = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+
+	catClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'catmovement', cat.geometry.morphTargets, 2 );
+  catMixer = new THREE.AnimationMixer( cat );
+  catAction = catMixer.clipAction( catClip, cat );
+  scene.add(cat);
+
+  cat.castShadow = true;
+  cat.receiveShadow = true;
+
+  catAction.play();
+
 });
 
 loader.load('scene-object-test-no-plants.json', function(geometry, materials) {
@@ -113,7 +134,6 @@ loader.load('scene-object-test-no-plants.json', function(geometry, materials) {
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   camera.lookAt(mesh.position);
-
 
 });
 
@@ -154,7 +174,8 @@ function animate(time) {
 
 function render() {
   var delta = 0.75 * clock.getDelta();
-  mixer.update(delta);
+  plantMixer.update(delta);
+  catMixer.update(delta);
   camera.lookAt(mesh.position);
   renderer.render(scene, camera);
   controls.update();
@@ -175,7 +196,7 @@ function solveForZ(x,z,rot) {
 }
 
 var tween = new TWEEN.Tween(coords)
-  .to({ x: solveForX(coords.x, coords.z, rot), z: solveForZ(coords.x, coords.z, rot) }, 3000)
+  .to({ x: solveForX(coords.x, coords.z, rot), z: solveForZ(coords.x, coords.z, rot) }, 2000)
   .easing(TWEEN.Easing.Cubic.In)
   .onUpdate(function() {
       camera.position.x = coords.x;
@@ -191,7 +212,7 @@ var tween2 = new TWEEN.Tween(coords)
   });
 
 var tween3 = new TWEEN.Tween(coords)
-  .to({ x: solveForX(coords.x, coords.z, rot3), z: solveForZ(coords.x, coords.z, rot3) }, 3000)
+  .to({ x: solveForX(coords.x, coords.z, rot3), z: solveForZ(coords.x, coords.z, rot3) }, 2000)
   .easing(TWEEN.Easing.Cubic.In)
   .onUpdate(function() {
       camera.position.x = coords.x;
