@@ -115,7 +115,7 @@ loader.load('cat.json', function(geometry, materials) {
 
   cat = new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
 
-	catClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'catmovement', cat.geometry.morphTargets, 2 );
+	catClip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'catmovement', cat.geometry.morphTargets, 1 );
   catMixer = new THREE.AnimationMixer( cat );
   catAction = catMixer.clipAction( catClip, cat );
   scene.add(cat);
